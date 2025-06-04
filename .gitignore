@@ -21,3 +21,8 @@ dist/
 
 # Logs
 *.log
+
+# Local database files
+db/
+*.db
+*.sqlite3
