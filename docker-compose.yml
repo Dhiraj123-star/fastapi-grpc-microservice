@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  grpc-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.grpc
+    volumes:
+      - ./grpc_server/users.db:/grpc_server/users.db
+    ports:
+      - "50051:50051"
+  
+  fastapi-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    
+    ports:
+      - "8000:8000"
+    
+    depends_on:
+      - grpc-server

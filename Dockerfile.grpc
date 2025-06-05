@@ -1,0 +1,13 @@
+# Dockerfile.grpc
+
+FROM python:3.12-slim
+
+WORKDIR /grpc_server
+
+COPY requirements.txt ./
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY grpc_server/ ./grpc_server/
+
+CMD ["python","grpc_server/server.py"]
