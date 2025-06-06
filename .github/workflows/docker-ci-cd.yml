@@ -1,4 +1,4 @@
-name: CI/CD - Build & Push Docker Image
+name: CI/CD - Build & Push Multi-Service Images
 
 on:
   push:
@@ -6,15 +6,20 @@ on:
       - main
 
 env:
-  IMAGE_NAME: dhiraj918106/fastapi-grpc-microservice
+  DOCKERHUB_USERNAME: dhiraj918106
+  IMAGE_FASTAPI: dhiraj918106/fastapi-grpc-microservice-fastapi
+  IMAGE_GRPC: dhiraj918106/fastapi-grpc-microservice-grpc
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Log in to DockerHub
         uses: docker/login-action@v2
@@ -22,9 +27,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and Push FastAPI Image
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: ./Dockerfile.fastapi
           push: true
-          tags: ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.IMAGE_FASTAPI }}:latest
+
+      - name: Build and Push gRPC Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile.grpc
+          push: true
+          tags: ${{ env.IMAGE_GRPC }}:latest
